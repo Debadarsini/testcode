@@ -1,0 +1,91 @@
+Overview
+    If you want to extract text from images using Java , this is the tutorial for you.
+    We will use tesseract library , intellij and java runtime time to navigate this feature.
+
+Tesseract
+
+    Tesseract is an open-source OCR engine developed by HP that recognizes more than 100 languages,
+    It contains two OCR engines for image processing – a LSTM (Long Short Term Memory) OCR engine
+    and a legacy OCR engine that works by recognizing character patterns.
+
+    The OCR engine uses the Leptonica library to open the images and supports various output formats.
+
+
+ Set Up
+
+    Tesseract is available for major OS.
+
+    To install in mac , you can use brew
+        brew install tesseract
+
+    To install in Linux can use Yum
+        yum install tesseract
+
+Validation
+
+       To validate installation correctness. You can try extracting text from image using following command
+            tesseract *.png output
+
+       Replace  * with actual image name and path
+
+
+Java Application
+    Tess4J is a Java wrapper for the Tesseract APIs that provides OCR support for
+    various image formats like JPEG, GIF, PNG, and BMP.
+
+    Add tess4j dependency in your maven project by adding following in pom.xml
+
+        <dependency>
+            <groupId>net.sourceforge.tess4j</groupId>
+            <artifactId>tess4j</artifactId>
+            <version>4.5.1</version>
+        </dependency>
+
+
+    Then create Java class with following code
+        File image = new File("path to image");
+        Tesseract tesseract = new Tesseract();
+        tesseract.setDatapath("abosulte path /src/main/resources/tessdata ");
+        tesseract.setLanguage("eng");
+        tesseract.setPageSegMode(1);
+        tesseract.setOcrEngineMode(1);
+        String result = tesseract.doOCR(image);
+
+    Download osd.traineddata and eng.traineddata files from  bhttps://github.com/tesseract-ocr/tessdata_best/blob/main/osd.traineddata
+     and https://github.com/tesseract-ocr/tessdata_fast/blob/main/eng.traineddata respectively
+     and place it /src/main/resources/tessdata. Make sure    tesseract.setDatapath is set to absolute path.
+
+
+  Execute the Java main file , you can see the text generated from image file.
+
+
+  Errors
+    1. You might get following error
+        java.lang.UnsatisfiedLinkError: Unable to load library 'tesseract': Native library (darwin/libtesseract.dylib)
+    Problem : Tess4j is just a wrapper over tesseract. However maven library isn't actually refering to installed tesseract
+
+    Solution : Point tess4j libraray to your OSS instaleld library
+
+    Steps:
+        1. Navigate to Tess4J maven install directiory :cd  absoultepath/.m2/repository/net/sourceforge/tess4j/tess4j/4.5.1
+        2. mkdir darwin
+        3. jar uf tess4j-4.5.1.jar darwin
+        4. cp /usr/local/Cellar/tesseract/4.1.1/lib/libtesseract.4.dylib darwin/libtesseract.dylib
+        5. jar uf tess4j-4.5.1.jar darwin/libtesseract.dylib
+        6. jar tf tess4j-4.5.1.jar
+
+    2. Not able to load eng.traineddata
+            Solution : Provide absolute path for trainedata
+
+
+
+
+
+
+
+
+
+
+
+
+
